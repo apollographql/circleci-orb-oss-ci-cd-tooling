@@ -34,6 +34,26 @@ commands:
           # to use `npm` (rather than `yarn`) once Node 6 is no longer tested below.
           name: Install npm@<< parameters.version >>, but with yarn.
           command: sudo yarn global add npm@<< parameters.version >>
+  npm_clean_install_with_caching:
+    description: |
+      Run 'npm ci' and utilize a cache of `~/.npm` based on cache-busting
+      techniques which obey changes in 'package-lock.json', the Git branch,
+      and the CIRCLECI_CACHE_VERSION environment variable.
+    steps:
+      - restore_cache:
+          keys:
+            # When lock file changes, use increasingly general patterns to restore cache
+            - npm-{{ .Environment.CIRCLECI_CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - npm-{{ .Environment.CIRCLECI_CACHE_VERSION }}-{{ .Branch }}-
+            - npm-{{ .Environment.CIRCLECI_CACHE_VERSION }}-
+      - run: npm --version
+      - run: npm ci
+      - save_cache:
+          key: npm-{{ .Environment.CIRCLECI_CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package-lock.json" }}
+          paths:
+            # This should cache the npm cache instead of node_modules, which is needed because
+            # npm ci actually removes node_modules before installing to guarantee a clean slate.
+            - ~/.npm
   start_verdaccio:
     description: Start the Verdaccio server
     parameters:
