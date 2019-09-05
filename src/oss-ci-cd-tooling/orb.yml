@@ -263,7 +263,7 @@ jobs:
             # of its continued usage in many build systems and is too easy to
             # do multi-line text extraction with.  Perl pie for the win.
             to_publish="$(perl -0777 \
-              -nle 'print "$1" while /^Found.*to publish:\n(.+)^$/msg' \
+              -nle 'print "$1" while /^Found.*to publish:\n(^ - .*?$)+^$/msg' \
               ~/lerna-output.txt)"
 
             markdown_to_publish="$(echo "$to_publish" |
