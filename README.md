@@ -28,5 +28,12 @@ run:
 circleci orbs publish src/oss-ci-cd-tooling/orb.yaml apollo/oss-ci-cd-tooling@0.0.2
 ```
 
+Alternatively, there's a `npm version <bumpish>` type command.  For example, to
+publish and bump by a `patch`:
+
+```
+circleci orb publish increment src/oss-ci-cd-tooling/orb.yml apollo/oss-ci-cd-tooling patch
+```
+
 For more information, [see CircleCI's
 documentation](https://circleci.com/docs/2.0/creating-orbs/).
