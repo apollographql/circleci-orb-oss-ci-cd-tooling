@@ -323,6 +323,7 @@ jobs:
       # Maybe not the most reusable pattern, but also the most common case.
       - attach_workspace:
           at: .
+      - write_publish_env_script
       - run:
           name: Publish
           command: |
