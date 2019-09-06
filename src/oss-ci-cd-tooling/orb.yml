@@ -18,6 +18,15 @@ executors:
       - image: circleci/node:<< parameters.tag >>
 
 commands:
+  write_npmrc_for_npm_token:
+    description: Write an .npmrc that uses the $NPM_TOKEN environment variable
+    steps:
+      - run:
+          name: Writing .npmrc for $NPM_TOKEN authentication.
+          command: |
+            cat \<<'EOF' > ~/.npmrc
+            //registry.npmjs.org/:_authToken=${NPM_TOKEN}
+            EOF
   install_specific_npm_version:
     description: Install a specific version of npm
     parameters:
@@ -347,6 +356,7 @@ jobs:
       - attach_workspace:
           at: .
       - write_publish_env_script
+      - write_npmrc_for_npm_token
       - run:
           name: Publish
           command: |
