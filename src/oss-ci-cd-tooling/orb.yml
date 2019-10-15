@@ -133,6 +133,32 @@ commands:
             logs:
               - {type: stdout, format: pretty, level: http}
             EOF
+  save_verdaccio_storage:
+    description: |
+      Save the Verdaccio storage to a known location in the workspace.
+    parameters:
+      verdaccio_path:
+        type: string
+        description: The location of the Verdaccio installation store
+        default: '$HOME/.config/verdaccio/storage/'
+      backup_path:
+        type: string
+        description: The location where Verdaccio will be backed up to.
+        default: './.verdaccio-storage'
+    steps:
+      - run:
+          name: Save Verdaccio storage
+          command: |
+            cp -R "<< parameters.verdaccio_path >>" "<< parameters.backup_path >>"
+      - persist_to_workspace:
+          root: .
+          paths:
+            - << parameters.backup_path >>/**
+  publish_verdaccio_storage_as_artifacts:
+    steps:
+      - store_artifacts:
+          path: ./.verdaccio-storage/
+          destination: storage
   write_publish_env_script:
     steps:
       - run:
@@ -251,6 +277,8 @@ jobs:
               --registry=http://localhost:4873/ \
               --yes \
               from-package
+      - save_verdaccio_storage
+      - publish_verdaccio_storage_as_artifacts
       - store_artifacts:
           path: ~/.config/verdaccio/storage/
           destination: packed
