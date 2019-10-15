@@ -72,7 +72,7 @@ commands:
           The path for the location to write the config to.  The default is
           the default path which Verdaccio looks for.  Be sure to add double
           quotes to this if the path contains spaces.
-        default: '~/.config/verdaccio/config.yaml'
+        default: '$HOME/.config/verdaccio/config.yaml'
       port:
         type: integer
         default: 4873
@@ -81,7 +81,7 @@ commands:
           name: Verdaccio
           command: |
             npx verdaccio \
-              --config << parameters.config_path >> \
+              --config "<< parameters.config_path >>" \
               --listen << parameters.port >>
           background: true
   write_verdaccio_config:
@@ -96,7 +96,7 @@ commands:
           The path for the location to write the config to.  The default is
           the default path which Verdaccio looks for.  Be sure to add double
           quotes to this if the path contains spaces.
-        default: '~/.config/verdaccio/config.yaml'
+        default: '$HOME/.config/verdaccio/config.yaml'
     steps:
       - run:
           name: Write Verdaccio config
