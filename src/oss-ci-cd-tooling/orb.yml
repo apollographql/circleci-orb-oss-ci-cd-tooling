@@ -296,9 +296,65 @@ jobs:
               from-package
       - save_verdaccio_storage
       - publish_verdaccio_storage_as_artifacts
+  oclif_pack_from_verdaccio_storage:
+    description: Pack the oclif tarball from Verdaccio
+    parameters:
+      node_version:
+        type: string
+        description: The version of Node.js to use.
+        default: '10'
+      verdaccio_storage:
+        type: string
+        description: The path to the backed up Verdaccio storage
+        default: '.verdaccio-storage'
+      package:
+        type: string
+        description: The name of the package to install and pack
+    executor:
+      name: node
+      tag: << parameters.node_version >>
+    steps:
+      # We attach the workspace and just run with it, with no other guide.
+      # Maybe not the most reusable pattern, but also the most common case.
+      - attach_workspace:
+          at: .
+      - restore_verdaccio_storage_from_backup
+      - write_verdaccio_config:
+          proxy_to_npmjs: true
+      - start_verdaccio
+      - run:
+          name: Make tmp dir
+          command: |
+            mkdir tmp-pack-oclif/
+            cd tmp-pack-oclif/
+            # We're going to install the package to get it and generate
+            # a lockfile, but that necessitates that we install into a temp
+            # package.
+            npm init -y
+
+            # Install the requested package.
+            npm install --registry http://localhost:4873 << parameters.package >>
+
+            # Go into the installed package within node_modules/
+            # so we can operate on the version that was installed from the
+            # registry (along with any local dependencies that were installed
+            # from the registry)
+            cd "node_modules/<< parameters.package >>/"
+
+            # Generate a lockfile, since those are never published to npm, and
+            # the oclif-dev package absolutely requires its presence.
+            # In a more ideal world, we'd have a npm-shrinkwrap.json already
+            # present, but Lerna doesn't seem to publish that right now.
+            npm install --registry http://localhost:4873 --package-lock-only
+
+            # Build for Darwin
+            npx -p @oclif/dev-cli oclif-dev pack --targets=darwin-x64
+
+            # Move it to a known location where we can write it to artifacts.
+            mv ./dist/ ../../../oclif-dist/
       - store_artifacts:
-          path: ~/.config/verdaccio/storage/
-          destination: packed
+          path: ./oclif-dist/
+          destination: oclif-pack
   dry_run:
     description: Dry-run
     executor:
