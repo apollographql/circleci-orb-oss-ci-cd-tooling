@@ -323,7 +323,7 @@ jobs:
           proxy_to_npmjs: true
       - start_verdaccio
       - run:
-          name: Make tmp dir
+          name: oclif pack from Verdaccio-installed packages
           command: |
             mkdir tmp-pack-oclif/
             cd tmp-pack-oclif/
