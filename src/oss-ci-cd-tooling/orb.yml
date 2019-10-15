@@ -159,6 +159,23 @@ commands:
       - store_artifacts:
           path: ./.verdaccio-storage/
           destination: storage
+  restore_verdaccio_storage_from_backup:
+    description: Restore a previously backed up Verdaccio storage
+    parameters:
+      verdaccio_path:
+        type: string
+        description: The location of the Verdaccio installation store
+        default: '$HOME/.config/verdaccio/storage/'
+      backup_path:
+        type: string
+        description: The location of the Verdaccio backup to restore from.
+        default: './.verdaccio-storage'
+    steps:
+      - run:
+          name: Restoring Verdaccio storage
+          command: |
+            mkdir -p "<< parameters.verdaccio_path >>"
+            cp -R "<< parameters.backup_path >>" "<< parameters.verdaccio_path >>"
   write_publish_env_script:
     steps:
       - run:
