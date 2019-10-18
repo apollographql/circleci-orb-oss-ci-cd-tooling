@@ -174,7 +174,7 @@ commands:
       - run:
           name: Restoring Verdaccio storage
           command: |
-            mkdir -p "<< parameters.verdaccio_path >>"
+            mkdir -p "$(dirname << parameters.verdaccio_path >>)"
             cp -R "<< parameters.backup_path >>" "<< parameters.verdaccio_path >>"
   write_publish_env_script:
     steps:
