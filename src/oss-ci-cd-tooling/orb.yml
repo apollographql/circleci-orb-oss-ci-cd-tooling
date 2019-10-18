@@ -97,6 +97,15 @@ commands:
           the default path which Verdaccio looks for.  Be sure to add double
           quotes to this if the path contains spaces.
         default: '$HOME/.config/verdaccio/config.yaml'
+      skip_proxy_on_local_packages:
+        type: boolean
+        default: false
+        description: |
+          When proxy_to_npmjs is enabled, do not proxy files which are specified
+          in the project's "package.json" "dependencies" if those dependencies
+          are "file:" references.  This is partially a Lernaism, but such file
+          references are local packages within this repository and we can use
+          them as a guide to define which packages we will not proxy.
     steps:
       - run:
           name: Write Verdaccio config
@@ -104,8 +113,26 @@ commands:
             # Exit on all errors, undeclared variables and pipefailures.
             set -euo pipefail
 
+            <<# parameters.proxy_to_npmjs >>
+            <<# parameters.skip_proxy_on_local_packages >>
+            # Build the list of local packages for the config that we'll
+            # be injecting into the file that we write out next.
+            # Use in-line Node-fu to do it.  We are capturing the output of
+            # the JavaScript into the local_pkg_config environment variable.
+            local_pkg_config="$(cat \<<'EOF' | node -p
+            Object.entries(require("./package.json").dependencies)
+              .filter(([pkg, value]) => value.startsWith("file:"))
+              .map(([name]) =>
+                `  '${name}':\n    access: $all\n    publish: $all`)
+              .join("\n")
+            EOF
+            )"
+
+            <</ parameters.skip_proxy_on_local_packages >>
+            <</ parameters.proxy_to_npmjs >>
+
             mkdir -p "$(dirname << parameters.config_path >>)"
-            cat \<<'EOF' > << parameters.config_path >>
+            cat \<<EOF > << parameters.config_path >>
             # Store the files on disk.  We'll use this directory as a build
             # artifact and gain access to all of the packages which are
             # published to this server.
@@ -124,9 +151,14 @@ commands:
             # Allow any package to be published to this (local) server with
             # no authentication.
             packages:
+              <<# parameters.proxy_to_npmjs >>
+              <<# parameters.skip_proxy_on_local_packages >>
+            $local_pkg_config
+              <</ parameters.skip_proxy_on_local_packages >>
+              <</ parameters.proxy_to_npmjs >>
               '**':
-                access: $all
-                publish: $all
+                access: \$all
+                publish: \$all
                 <<# parameters.proxy_to_npmjs >>
                 proxy: npmjs
                 <</ parameters.proxy_to_npmjs >>
@@ -174,7 +206,7 @@ commands:
       - run:
           name: Restoring Verdaccio storage
           command: |
-            mkdir -p "<< parameters.verdaccio_path >>"
+            mkdir -p "$(dirname << parameters.verdaccio_path >>)"
             cp -R "<< parameters.backup_path >>" "<< parameters.verdaccio_path >>"
   write_publish_env_script:
     steps:
@@ -321,6 +353,7 @@ jobs:
       - restore_verdaccio_storage_from_backup
       - write_verdaccio_config:
           proxy_to_npmjs: true
+          skip_proxy_on_local_packages: true
       - start_verdaccio
       - run:
           name: oclif pack from Verdaccio-installed packages
