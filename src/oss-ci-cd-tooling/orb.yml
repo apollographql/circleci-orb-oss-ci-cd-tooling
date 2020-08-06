@@ -1,7 +1,7 @@
 version: 2.1
 
 # There is not really a manifest for this file, so I'm bumping this comment.
-# version_for_git: 0.0.8
+# version_for_git: 0.0.9
 
 description: |
   Apollo open-source build and release tooling orbs
