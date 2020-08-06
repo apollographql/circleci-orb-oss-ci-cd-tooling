@@ -281,7 +281,7 @@ commands:
 
             # If there's a dist-tag, we'll publish to that instead of 'latest'.
             DIST_TAG="$(echo "$publish_tag_msg" |
-              sed -E 's/^Publish($|( \(dist-tag:([a-z-]+)\))$)/\3/')"
+              sed -E 's/^Publish($|( \(dist-tag:([a-z0-9-]+)\))$)/\3/')"
 
             # Default to latest if we couldn't extract anything from the
             # annotated `publish/` tag.
