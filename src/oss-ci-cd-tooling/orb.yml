@@ -1,7 +1,7 @@
 version: 2.1
 
 # There is not really a manifest for this file, so I'm bumping this comment.
-# version_for_git: 0.0.10
+# version_for_git: 0.0.11
 
 description: |
   Apollo open-source build and release tooling orbs
@@ -43,11 +43,7 @@ commands:
           # to use `npm` (rather than `yarn`) once Node 6 is no longer tested below.
           name: Install npm@<< parameters.version >>, but with yarn.
           command: sudo yarn global add npm@<< parameters.version >>
-  npm_clean_install_with_caching:
-    description: |
-      Run 'npm ci' and utilize a cache of `~/.npm` based on cache-busting
-      techniques which obey changes in 'package-lock.json', the Git branch,
-      and the CIRCLECI_CACHE_VERSION environment variable.
+  npm_cache_restore:
     steps:
       - restore_cache:
           keys:
@@ -55,14 +51,34 @@ commands:
             - npm-{{ .Environment.CIRCLECI_CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package-lock.json" }}
             - npm-{{ .Environment.CIRCLECI_CACHE_VERSION }}-{{ .Branch }}-
             - npm-{{ .Environment.CIRCLECI_CACHE_VERSION }}-
-      - run: npm --version
-      - run: npm ci
+  npm_cache_save:
+    steps:
       - save_cache:
           key: npm-{{ .Environment.CIRCLECI_CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package-lock.json" }}
           paths:
             # This should cache the npm cache instead of node_modules, which is needed because
             # npm ci actually removes node_modules before installing to guarantee a clean slate.
             - ~/.npm
+  npm_clean_install_with_caching:
+    description: |
+      Run 'npm ci' and utilize a cache of `~/.npm` based on cache-busting
+      techniques which obey changes in 'package-lock.json', the Git branch,
+      and the CIRCLECI_CACHE_VERSION environment variable.
+    steps:
+      - npm_cache_restore
+      - run: npm --version
+      - run: npm ci
+      - npm_cache_save
+  npm_install_with_caching:
+    description: |
+      Run 'npm i' and utilize a cache of `~/.npm` based on cache-busting
+      techniques which obey changes in 'package-lock.json', the Git branch,
+      and the CIRCLECI_CACHE_VERSION environment variable.
+    steps:
+      - npm_cache_restore
+      - run: npm --version
+      - run: npm i
+      - npm_cache_save
   start_verdaccio:
     description: Start the Verdaccio server
     parameters:
