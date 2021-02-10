@@ -20,9 +20,10 @@ To see how Apollo Server uses these orbs, see its
 
 The [`circleci` CLI
 tool](https://circleci.com/docs/2.0/creating-orbs/#get-the-new-circleci-cli) is
-used to release.  As an example, to publish a new `apollo/oss-ci-cd-tooling`
-orb from its source in `src/oss-ci-cd-tooling` as version `0.0.2`, one could
-run:
+used to release.  (If you use [direnv](https://direnv.net/), just run `direnv
+allow` to install the CLI locally in the repo.) As an example, to publish a new
+`apollo/oss-ci-cd-tooling` orb from its source in `src/oss-ci-cd-tooling` as
+version `0.0.2`, one could run:
 
 ```
 circleci orbs publish src/oss-ci-cd-tooling/orb.yaml apollo/oss-ci-cd-tooling@0.0.2
