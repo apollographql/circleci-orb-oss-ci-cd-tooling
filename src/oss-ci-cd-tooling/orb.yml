@@ -1,7 +1,7 @@
 version: 2.1
 
 # There is not really a manifest for this file, so I'm bumping this comment.
-# version_for_git: 0.0.11
+# version_for_git: 0.0.15
 
 description: |
   Apollo open-source build and release tooling orbs
@@ -444,6 +444,18 @@ jobs:
             to_publish="$(perl -0777 \
               -nle 'print "$1" while /^Found.*to publish:\n(^ - .*?$)+^$/msg' \
               ~/lerna-output.txt)"
+
+            contains_prereleases="$(perl -0777 \
+              -nle 'print "yes" if /^ - \S+ => \S+\d-\S+$/m' \
+              ~/lerna-output.txt)"
+
+            if [ -n "$contains_prereleases" ]; then
+              echo 'This release contains prereleases.'
+              if [ "$DIST_TAG" = latest ]; then
+                echo 'This orb will not publish a prerelease to the "latest" tag.'
+                exit 1
+              fi
+            fi
 
             markdown_to_publish="$(echo "$to_publish" |
               sed -E 's%^ - (.+) => (.+)$%• \`\1\` :point_right: \`\2\`\\n%')"
