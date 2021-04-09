@@ -13,7 +13,7 @@ executors:
     parameters:
       tag:
         type: string
-        default: '10'
+        default: '12'
     docker:
       - image: circleci/node:<< parameters.tag >>
 
@@ -322,7 +322,7 @@ jobs:
       node_version:
         type: string
         description: The version of Node.js to use.
-        default: '10'
+        default: '12'
     executor:
       name: node
       tag: << parameters.node_version >>
@@ -350,7 +350,7 @@ jobs:
       node_version:
         type: string
         description: The version of Node.js to use.
-        default: '10'
+        default: '12'
       verdaccio_storage:
         type: string
         description: The path to the backed up Verdaccio storage
