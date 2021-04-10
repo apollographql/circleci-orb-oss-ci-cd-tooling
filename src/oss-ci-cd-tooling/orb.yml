@@ -1,7 +1,7 @@
 version: 2.1
 
 # There is not really a manifest for this file, so I'm bumping this comment.
-# version_for_git: 0.0.16
+# version_for_git: 0.0.17
 
 description: |
   Apollo open-source build and release tooling orbs
@@ -96,7 +96,7 @@ commands:
       - run:
           name: Verdaccio
           command: |
-            npx verdaccio \
+            npx verdaccio@5 \
               --config "<< parameters.config_path >>" \
               --listen << parameters.port >>
           background: true
