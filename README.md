@@ -26,7 +26,7 @@ allow` to install the CLI locally in the repo.) As an example, to publish a new
 version `0.0.2`, one could run:
 
 ```
-circleci orbs publish src/oss-ci-cd-tooling/orb.yaml apollo/oss-ci-cd-tooling@0.0.2
+circleci orb publish src/oss-ci-cd-tooling/orb.yaml apollo/oss-ci-cd-tooling@0.0.2
 ```
 
 Alternatively, there's a `npm version <bumpish>` type command.  For example, to
@@ -35,6 +35,10 @@ publish and bump by a `patch`:
 ```
 circleci orb publish increment src/oss-ci-cd-tooling/orb.yml apollo/oss-ci-cd-tooling patch
 ```
+
+"Prerelease" versions like `1.2.3-beta.1` are not supported, but you can use a
+version of the form `dev:any-string` for testing; these special dev releases
+only last 90 days.
 
 For more information, [see CircleCI's
 documentation](https://circleci.com/docs/2.0/creating-orbs/).
