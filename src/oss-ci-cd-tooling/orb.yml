@@ -1,10 +1,13 @@
 version: 2.1
 
 # There is not really a manifest for this file, so I'm bumping this comment.
-# version_for_git: 0.0.18
+# version_for_git: 0.0.19
 
 description: |
   Apollo open-source build and release tooling orbs
+
+orbs:
+  wait-for: cobli/wait-for@0.0.2
 
 examples:
 
@@ -100,6 +103,8 @@ commands:
               --config "<< parameters.config_path >>" \
               --listen << parameters.port >>
           background: true
+      - wait-for/port:
+          port: << parameters.port >>
   write_verdaccio_config:
     description: Write Verdaccio config
     parameters:

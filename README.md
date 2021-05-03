@@ -26,7 +26,7 @@ allow` to install the CLI locally in the repo.) As an example, to publish a new
 version `0.0.2`, one could run:
 
 ```
-circleci orb publish src/oss-ci-cd-tooling/orb.yaml apollo/oss-ci-cd-tooling@0.0.2
+circleci orb publish src/oss-ci-cd-tooling/orb.yml apollo/oss-ci-cd-tooling@0.0.2
 ```
 
 Alternatively, there's a `npm version <bumpish>` type command.  For example, to
