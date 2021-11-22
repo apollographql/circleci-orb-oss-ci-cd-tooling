@@ -1,7 +1,7 @@
 version: 2.1
 
 # There is not really a manifest for this file, so I'm bumping this comment.
-# version_for_git: 0.0.19
+# version_for_git: 0.0.20
 
 description: |
   Apollo open-source build and release tooling orbs
@@ -552,7 +552,7 @@ jobs:
             echo "Publishing to npm under the $DIST_TAG tag."
 
             # Do the real, actual publish to npm.
-            DEBUG=lerna npx lerna publish --dist-tag="$DIST_TAG" from-git --yes
+            DEBUG=lerna npx lerna publish --dist-tag="$DIST_TAG" from-git --no-verify-access --yes
 
             if [ -z "$SLACK_WEBHOOK_URL" ]; then
               echo 'Cannot post to Slack because $SLACK_WEBHOOK_URL is not set.'
