@@ -1,15 +1,9 @@
-# CircleCI Orbs
+# `oss-ci-cd-tooling` CircleCI Orb
 
-These are [CircleCI Orbs](https://circleci.com/orbs/), reusable bits of
-CircleCI configuration (e.g. commands, executors and jobs), which can be
-composed into a more complete CircleCI configuration without the repetition
-often found in CircleCI configuration files.
+This is the source for the `apollo/oss-ci-cd-tooling` [CircleCI Orb](https://circleci.com/orbs/).  Orbs are reusable bits of CircleCI configuration (e.g. commands, executors and jobs), which can be composed into a more complete CircleCI configuration without the repetition often found in CircleCI configuration files.
 
-Currently, this repository introduces a `oss-ci-cd-tooling` Orb which contains
-several of the jobs which we re-use within Apollo GraphQL repositories, like
-[Apollo Server](https://github.com/apollographql/apollo-server) and [Apollo
-Tooling](https://github.com/apollographql/apollo-tooling/) and [Apollo
-Client](https://github.com/apollographql/apollo-client).
+This repository has a single `oss-ci-cd-tooling` Orb which contains several of the jobs which we re-use within Apollo GraphQL repositories, like [Apollo Server](https://github.com/apollographql/apollo-server) and [Apollo Tooling](https://github.com/apollographql/apollo-tooling/) and [Apollo
+Federation](https://github.com/apollographql/federation).
 
 ## Examples
 
