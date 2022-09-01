@@ -568,7 +568,7 @@ jobs:
             for tag in ${DIST_TAG_ARR[@]}; do
               for package in $PACKAGES; do 
                 echo "Publishing $package to npm under tag $tag"
-                echo npx npm dist-tag add $package $tag # TODO: This is an "echo" for now, is this the best way to test?
+                echo npm dist-tag add $package $tag # TODO: This is an "echo" for now, is this the best way to test?
               done
             done
 
