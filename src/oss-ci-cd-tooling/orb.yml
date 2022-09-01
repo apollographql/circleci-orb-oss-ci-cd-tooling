@@ -549,10 +549,29 @@ jobs:
             # Load our variables what we set earlier (e.g. DIST_TAG).
             source ~/scripts/apollo-setup-publish-env
 
-            echo "Publishing to npm under the $DIST_TAG tag."
+            # Get a list of packages that lerna manages
+            PACKAGES=`npx lerna list --json |jq -r '.[] | .name + "@" + .version'`
+
+            # Get all tags that we're trying to set. Lerna will be able to handle the first one,
+            # but if there are more than one, we'll need to handle it manually
+            # Note that we expect DIST_TAG to be comma delimited
+            DIST_TAG_ARR=($(echo $DIST_TAG | tr "," " "))
+            FIRST_TAG=${DIST_TAG_ARR[0]}
+
+            echo "Publishing to npm under the $FIRST_TAG tag."
 
             # Do the real, actual publish to npm.
-            DEBUG=lerna npx lerna publish --dist-tag="$DIST_TAG" from-git --no-verify-access --yes
+            DEBUG=lerna npx lerna publish --dist-tag="$FIRST_TAG" from-git --no-verify-access --yes
+
+            # iterate over remaining packages/tags and manually call npm dist-tag for each of them
+            DIST_TAG_ARR=("${DIST_TAG_ARR[@]:1}")
+            for tag in ${DIST_TAG_ARR[@]}; do
+              for package in $PACKAGES; do 
+                echo "Publishing $package to npm under tag $tag"
+                echo npm dist-tag add $package $tag # TODO: This is an "echo" for now, is this the best way to test?
+              done
+            done
+
 
             if [ -z "$SLACK_WEBHOOK_URL" ]; then
               echo 'Cannot post to Slack because $SLACK_WEBHOOK_URL is not set.'
